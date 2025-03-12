@@ -1,0 +1,7 @@
+name: KChallengesNew
+version: '1.0-SNAPSHOT'
+main: yt.lost.kChallengesNew.KChallengesNew
+api-version: '1.21'
+commands:
+  challenge:
+    description: challenges
