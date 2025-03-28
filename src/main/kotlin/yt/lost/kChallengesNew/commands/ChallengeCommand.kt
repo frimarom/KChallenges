@@ -14,13 +14,15 @@ class ChallengeCommand(private var plugin: Plugin, private var game: Game): Comm
         if(!game.isRunning){
             val player: Player = p0 as Player
 
-            val challengeMenu = game.challengeSelectionMenu
+            val gameSelectionMenu = game.gameSelectionMenu
 
-            plugin.server.pluginManager.registerEvents(challengeMenu, plugin)
+            plugin.server.pluginManager.registerEvents(gameSelectionMenu, plugin)
+            plugin.server.pluginManager.registerEvents(game.challengeSelectionMenu, plugin)
             plugin.server.pluginManager.registerEvents(game.settingsSelectionMenu, plugin)
 
+
             player.openInventory.close()
-            player.openInventory(challengeMenu.challengeInventory)
+            player.openInventory(gameSelectionMenu.gameModeSelectionInventory)
 
         }else{
             p0.sendMessage("§cDu kannst während die Challenge läuft das Menu nicht öffnen")

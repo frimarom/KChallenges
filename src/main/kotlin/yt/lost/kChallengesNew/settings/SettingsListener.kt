@@ -14,7 +14,7 @@ class SettingsListener(private val game: Game, private val settings: Settings): 
 
     @EventHandler
     fun onHealthRegenerate(event: EntityRegainHealthEvent){
-        if(settings.uhc && event.regainReason == EntityRegainHealthEvent.RegainReason.EATING)
+        if(settings.uhc && event.regainReason == EntityRegainHealthEvent.RegainReason.REGEN && event.regainReason == EntityRegainHealthEvent.RegainReason.EATING)
             event.isCancelled = true
     }
 

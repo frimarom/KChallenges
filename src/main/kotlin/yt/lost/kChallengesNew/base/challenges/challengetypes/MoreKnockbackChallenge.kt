@@ -13,8 +13,6 @@ import yt.lost.kChallengesNew.base.challenges.Challenge
 class MoreKnockbackChallenge(private val game: Game): Challenge() {
     override val name: String = "More Knockback"
     override var description: String = "Jeder Spieler hat 20mal mehr Knockback"
-    override var characterizedItem: ItemStack = createGuiItem(Material.FEATHER, "§a$name", "§7$description", "§7Status: " + if (isEnabled) "§aAn" else "§cAus")
-        get() = createGuiItem(Material.FEATHER, "§a$name", "§7$description", "§7Status: " + if (isEnabled) "§aAn" else "§cAus")
 
     @EventHandler
     fun onEntityDamage(event: EntityDamageEvent){
@@ -33,6 +31,10 @@ class MoreKnockbackChallenge(private val game: Game): Challenge() {
             .setY(0)
             .normalize()
             .multiply(20)
+    }
+
+    override fun updateAndGetCharacterizedItem(): ItemStack {
+        return createGuiItem(Material.FEATHER, "§a$name", "§7$description", "§7Status: " + if (isEnabled) "§aAn" else "§cAus")
     }
 
     override fun onStart() {

@@ -5,4 +5,5 @@ object Settings {
     var canDie: Boolean = false
     var pvp: Boolean = true
     var spectator: Boolean = true
+    var backpack: Boolean = false //TODO
 }

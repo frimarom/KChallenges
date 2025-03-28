@@ -11,6 +11,8 @@ import yt.lost.kChallengesNew.base.challenges.ChallengeCollection
 import yt.lost.kChallengesNew.base.menus.ChallengeSelectionMenu
 import yt.lost.kChallengesNew.base.menus.GameSelectionMenu
 import yt.lost.kChallengesNew.base.menus.SettingsSelectionMenu
+import yt.lost.kChallengesNew.base.menus.TeamGameModeSelectionMenu
+import yt.lost.kChallengesNew.base.teamgamemode.TeamGameModeCollection
 import yt.lost.kChallengesNew.listener.IdleListener
 import yt.lost.kChallengesNew.settings.Settings
 import yt.lost.kChallengesNew.settings.SettingsListener
@@ -20,15 +22,22 @@ import yt.lost.kChallengesNew.utils.TimerType
 class Game(private val plugin: Plugin) {
 
 
-    //TODO use this for game stats etc
+    var settings: Settings = Settings
     val isRunning
         get() = timer.running
+
     private val challengeCollection: ChallengeCollection = ChallengeCollection(this)
+    private val teamGameModeCollection: TeamGameModeCollection = TeamGameModeCollection()
+
+    val gameSelectionMenu: GameSelectionMenu = GameSelectionMenu(this)
+    val teamGameModeSelectionMenu: TeamGameModeSelectionMenu = TeamGameModeSelectionMenu(this, teamGameModeCollection)
     val challengeSelectionMenu: ChallengeSelectionMenu = ChallengeSelectionMenu(this, challengeCollection)
     val settingsSelectionMenu: SettingsSelectionMenu = SettingsSelectionMenu(this)
+
     private val timer: Timer = Timer(TimerType.UPWARDS, plugin)
-    private lateinit var settingsListener: SettingsListener
     private var idleListener: IdleListener = IdleListener(this)
+    private lateinit var settingsListener: SettingsListener
+
 
     init{
         plugin.server.pluginManager.registerEvents(idleListener, plugin)
@@ -39,16 +48,12 @@ class Game(private val plugin: Plugin) {
             return
 
         settingsListener = SettingsListener(this, settings)
+        this.settings = settings
 
         this.timer.start()
 
         plugin.server.pluginManager.registerEvents(settingsListener, plugin)
         HandlerList.unregisterAll(idleListener)
-
-        for(challenge in challengeCollection.challenges)
-            if(challenge.isEnabled)
-                plugin.server.pluginManager.registerEvents(challenge, plugin)
-
 
         for(player in Bukkit.getOnlinePlayers()){
             player.sendTitle("§aDer Timer", "§7wurde gestartet", 5, 40, 5)
@@ -63,6 +68,12 @@ class Game(private val plugin: Plugin) {
             player.inventory.clear()
         }
 
+        for(challenge in challengeCollection.challenges) {
+            if (challenge.isEnabled) {
+                plugin.server.pluginManager.registerEvents(challenge, plugin)
+                challenge.onStart()
+            }
+        }
     }
 
     fun stop(cause: String){

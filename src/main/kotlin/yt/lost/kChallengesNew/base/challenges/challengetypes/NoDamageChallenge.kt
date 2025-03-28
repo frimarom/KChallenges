@@ -12,18 +12,18 @@ class NoDamageChallenge(private var game: Game): Challenge() {
 
     override val name: String = "No Damage"
     override val description: String = "Die Spieler dürfen keinen Schaden bekommen"
-    override var characterizedItem: ItemStack = createGuiItem(Material.REDSTONE_BLOCK, "§a$name", "§7$description", "§7Status: " + if (isEnabled) "§aAn" else "§cAus")
-        get() {
-            return createGuiItem(
-                Material.REDSTONE_BLOCK,
-                "§a$name",
-                "§7$description",
-                "§7Status: " + if (isEnabled) "§aAn" else "§cAus"
-            )
-    }
 
     override fun onStart() {
         TODO("Not yet implemented")
+    }
+
+    override fun updateAndGetCharacterizedItem(): ItemStack {
+        return createGuiItem(
+            Material.REDSTONE_BLOCK,
+            "§a$name",
+            "§7$description",
+            "§7Status: " + if (isEnabled) "§aAn" else "§cAus"
+        )
     }
 
     @EventHandler

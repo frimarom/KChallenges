@@ -19,7 +19,7 @@ class ChallengeSelectionMenu(private var game: Game, private var challengeCollec
 
     init {
         for(challenge in challengeCollection.challenges){
-            this.challengeInventory.addItem(challenge.characterizedItem)
+            this.challengeInventory.addItem(challenge.updateAndGetCharacterizedItem())
         }
         for (i in 45..52){
             challengeInventory.setItem(i, ItemStack(Material.GRAY_STAINED_GLASS_PANE))
@@ -38,10 +38,10 @@ class ChallengeSelectionMenu(private var game: Game, private var challengeCollec
         val item: ItemStack? = event.currentItem
         if(item?.type != Material.GREEN_WOOL && item?.type != Material.GRAY_STAINED_GLASS_PANE) {
             for (challenge in challengeCollection.challenges) {
-                if (challenge.characterizedItem == item) {
+                if (challenge.updateAndGetCharacterizedItem().type == item?.type) {
                     challenge.isEnabled = !challenge.isEnabled
 
-                    this.challengeInventory.setItem(event.slot, challenge.characterizedItem)
+                    this.challengeInventory.setItem(event.slot, challenge.updateAndGetCharacterizedItem())
                 }
             }
         }else{
