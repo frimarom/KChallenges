@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack
 import yt.lost.kChallengesNew.base.Game
 import yt.lost.kChallengesNew.base.challenges.Challenge
 
-class NoDamageChallenge(private var game: Game): Challenge() {
+class NoDamageChallenge: Challenge() {
 
     override val name: String = "No Damage"
     override val description: String = "Die Spieler dürfen keinen Schaden bekommen"
@@ -29,6 +29,6 @@ class NoDamageChallenge(private var game: Game): Challenge() {
     @EventHandler
     fun onDamage(event: EntityDamageEvent){
         if(event.entity is Player)
-            game.stop("Der Spieler ${(event.entity as Player).name} hat Schaden genommen")
+            game?.stop("Der Spieler ${(event.entity as Player).name} hat Schaden genommen")
     }
 }

@@ -10,7 +10,7 @@ import org.bukkit.util.Vector
 import yt.lost.kChallengesNew.base.Game
 import yt.lost.kChallengesNew.base.challenges.Challenge
 
-class MoreKnockbackChallenge(private val game: Game): Challenge() {
+class MoreKnockbackChallenge: Challenge() {
     override val name: String = "More Knockback"
     override var description: String = "Jeder Spieler hat 20mal mehr Knockback"
 

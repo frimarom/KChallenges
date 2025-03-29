@@ -13,38 +13,43 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import yt.lost.kChallengesNew.base.Game
+import yt.lost.kChallengesNew.base.GamePreparation
+import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 import yt.lost.kChallengesNew.base.challenges.ChallengeCollection
 
-class GameSelectionMenu(private val game: Game): Listener {
+class GameSelectionMenu(private val progressiveGameCreator: ProgressiveGameCreator,
+                        gamePreparation: GamePreparation): SelectionMenu(
+    gamePreparation
+), Listener {
 
-    val gameModeSelectionInventory: Inventory = Bukkit.createInventory(null, InventoryType.BARREL, "GamemodeSelection")
+    override val inventory: Inventory = Bukkit.createInventory(null, InventoryType.BARREL, "GamemodeSelection")
 
     init {
-        for(i in 0 .. 27){
-            gameModeSelectionInventory.setItem(i, ItemStack(Material.GRAY_STAINED_GLASS_PANE))
+        for(i in 0 .. 26){
+            inventory.setItem(i, ItemStack(Material.GRAY_STAINED_GLASS_PANE))
         }
-        gameModeSelectionInventory.setItem(11, createGuiItem(Material.GOLD_BLOCK, "${ChatColor.GOLD}Team-Gamemodes", "Stay tuned!\n${ChatColor.GRAY}Spiele Spiele wie Achievement Hunt etc"))
-        gameModeSelectionInventory.setItem(15, createGuiItem(Material.NETHERITE_PICKAXE, "${ChatColor.GOLD}Challenges", "${ChatColor.GRAY}Versuche Minecraft mit einer bestimmten \n" +
+        inventory.setItem(11, createGuiItem(Material.GOLD_BLOCK, "${ChatColor.GOLD}Team-Gamemodes", "Stay tuned!\n${ChatColor.GRAY}Spiele Spiele wie Achievement Hunt etc"))
+        inventory.setItem(15, createGuiItem(Material.NETHERITE_PICKAXE, "${ChatColor.GOLD}Challenges", "${ChatColor.GRAY}Versuche Minecraft mit einer bestimmten \n" +
                                                                                                                                           "Einschränkung durchzuspielen"))
     }
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
-        if(event.inventory != this.gameModeSelectionInventory)
+        if(event.inventory != this.inventory)
             return
-
 
         event.isCancelled = true
 
         val item = event.currentItem
-        val clicker = event.whoClicked as Player
 
         when (item?.type) {
             Material.GOLD_BLOCK -> {
-                clicker.openInventory(game.teamGameModeSelectionMenu.selectionInventory)
+                gamePreparation.isChallenge = false
+                progressiveGameCreator.nextStep(gamePreparation)
             }
             Material.NETHERITE_PICKAXE -> {
-                clicker.openInventory(game.challengeSelectionMenu.challengeInventory)
+                gamePreparation.isChallenge = true
+                progressiveGameCreator.nextStep(gamePreparation)
             }
             else -> {}
         }
@@ -52,7 +57,7 @@ class GameSelectionMenu(private val game: Game): Listener {
 
     @EventHandler
     fun inventoryCloseEvent(event: InventoryCloseEvent){
-        if(event.inventory == this.gameModeSelectionInventory){
+        if(event.inventory == this.inventory){
             HandlerList.unregisterAll(this)
         }
     }

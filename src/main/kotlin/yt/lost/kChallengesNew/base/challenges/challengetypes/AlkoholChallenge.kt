@@ -1,9 +1,6 @@
 package yt.lost.kChallengesNew.base.challenges.challengetypes
 
-import org.bukkit.Bukkit
-import org.bukkit.ChatColor
-import org.bukkit.Material
-import org.bukkit.Sound
+import org.bukkit.*
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -16,13 +13,9 @@ import org.bukkit.inventory.ItemStack
 import yt.lost.kChallengesNew.base.Game
 import yt.lost.kChallengesNew.base.challenges.Challenge
 import java.util.*
-import java.util.stream.Collectors
-import java.util.stream.Stream
-import kotlin.collections.ArrayList
 
 
 class AlkoholChallenge(
-    private val game: Game
 ) : Challenge() {
     /*
     * SchildBlock
@@ -52,7 +45,11 @@ class AlkoholChallenge(
         if(!mustDrink)
             return
 
-        event.isCancelled = true
+        val from: Location = event.from
+        val to: Location? = event.to
+
+        if (to != null && (from.x != to.x || from.z != to.z || from.y != to.y))
+            event.setTo(Location(from.getWorld(), from.x, from.y, from.z, to.yaw, to.pitch))
     }
 
     @EventHandler

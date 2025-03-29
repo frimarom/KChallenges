@@ -12,24 +12,28 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import yt.lost.kChallengesNew.base.Game
+import yt.lost.kChallengesNew.base.GamePreparation
+import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 import yt.lost.kChallengesNew.base.challenges.ChallengeCollection
 
-class ChallengeSelectionMenu(private var game: Game, private var challengeCollection: ChallengeCollection) : Listener {
-    var challengeInventory: Inventory = Bukkit.createInventory(null, 54, "Challenges")
+class ChallengeSelectionMenu(private var progressiveGameCreator: ProgressiveGameCreator,
+                             private var challengeCollection: ChallengeCollection,
+                             gamePreparation: GamePreparation) : SelectionMenu(gamePreparation), Listener {
+    override var inventory: Inventory = Bukkit.createInventory(null, 54, "Challenges")
 
     init {
         for(challenge in challengeCollection.challenges){
-            this.challengeInventory.addItem(challenge.updateAndGetCharacterizedItem())
+            this.inventory.addItem(challenge.updateAndGetCharacterizedItem())
         }
         for (i in 45..52){
-            challengeInventory.setItem(i, ItemStack(Material.GRAY_STAINED_GLASS_PANE))
+            inventory.setItem(i, ItemStack(Material.GRAY_STAINED_GLASS_PANE))
         }
-        challengeInventory.setItem(53, createGuiItem(Material.GREEN_WOOL, "Weiter"))
+        inventory.setItem(53, createGuiItem(Material.GREEN_WOOL, "Weiter"))
     }
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent){
-        if(event.inventory != this.challengeInventory)
+        if(event.inventory != this.inventory)
             return
 
         event.isCancelled = true
@@ -41,17 +45,19 @@ class ChallengeSelectionMenu(private var game: Game, private var challengeCollec
                 if (challenge.updateAndGetCharacterizedItem().type == item?.type) {
                     challenge.isEnabled = !challenge.isEnabled
 
-                    this.challengeInventory.setItem(event.slot, challenge.updateAndGetCharacterizedItem())
+                    this.inventory.setItem(event.slot, challenge.updateAndGetCharacterizedItem())
                 }
             }
         }else{
-            clicker.openInventory(game.settingsSelectionMenu.settingsInventory)
+            val enabledChallenges = challengeCollection.challenges.filter { it.isEnabled }
+            gamePreparation.challenges = enabledChallenges
+            progressiveGameCreator.nextStep(gamePreparation)
         }
     }
 
     @EventHandler
     fun inventoryCloseEvent(event: InventoryCloseEvent){
-        if(event.inventory == this.challengeInventory){
+        if(event.inventory == this.inventory){
             HandlerList.unregisterAll(this)
         }
     }

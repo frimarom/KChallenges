@@ -3,10 +3,12 @@ package yt.lost.kChallengesNew.base.challenges
 import org.bukkit.Material
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
+import yt.lost.kChallengesNew.base.Game
 
 abstract class Challenge : Listener {
 
     var isEnabled: Boolean = false
+    var game: Game? = null
 
     abstract val name: String
     abstract val description: String

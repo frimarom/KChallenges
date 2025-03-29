@@ -1,6 +1,7 @@
 package yt.lost.kChallengesNew.base.menus
 
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
@@ -12,14 +13,18 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import yt.lost.kChallengesNew.base.Game
+import yt.lost.kChallengesNew.base.GamePreparation
+import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 import yt.lost.kChallengesNew.settings.Settings
 
-class SettingsSelectionMenu(private val game: Game): Listener {
-    var settingsInventory: Inventory = Bukkit.createInventory(null, InventoryType.BARREL, "Einstellungen")
+class SettingsSelectionMenu(private val progressiveGameCreator: ProgressiveGameCreator,
+                            gamePreparation: GamePreparation
+): SelectionMenu(gamePreparation), Listener {
+    override var inventory: Inventory = Bukkit.createInventory(null, InventoryType.BARREL, "Einstellungen")
+    private val settings: Settings = Settings()
 
     init {
-        this.settingsInventory.setItem(10,
+        this.inventory.setItem(10,
             createGuiItem(
                 Material.REDSTONE,
                 "§cMaximale Leben ",
@@ -27,30 +32,38 @@ class SettingsSelectionMenu(private val game: Game): Listener {
                 "§8Linksklick §8zum §aerhöhen",
                 "§8Rechtsklick §8zum §averringern")
         )
-        this.settingsInventory.setItem(11,
+        this.inventory.setItem(11,
             createGuiItem(
                 Material.GOLDEN_APPLE,
                 "§6Ultra Hardcore",
-                "§8Ultrahardcore ist ${if(Settings.uhc){"§aAn"}else{"§cAus"}}")
+                "§8Ultrahardcore ist ${if(settings.uhc){"§aAn"}else{"§cAus"}}")
         )
-        this.settingsInventory.setItem(13,
+        this.inventory.setItem(12,
+            createGuiItem(
+                Material.BUNDLE,
+                "${ChatColor.GREEN}Backpack",
+                "${ChatColor.DARK_GRAY}Backpack ist ${if(settings.backpack){"${ChatColor.GREEN}An"}else{"${ChatColor.RED}Aus"}}"
+            )
+        )
+        this.inventory.setItem(13,
             createGuiItem(
                 Material.PLAYER_HEAD,
                 "§6Sterben",
-                "§8Sterben ist ${if(Settings.canDie){"§aErlaubt"}else{"§cnicht Erlaubt"}}",
+                "§8Sterben ist ${if(settings.canDie){"§aErlaubt"}else{"§cnicht Erlaubt"}}",
                 "§8Wenn §cNicht Erlaubt §8ist, ist die Challenge nach dem Sterben eines Spielers vorbei")
         )
-        this.settingsInventory.setItem(26,
+        this.inventory.setItem(26,
             createGuiItem(
                 Material.GREEN_WOOL,
                 "Starten"
             )
         )
+
     }
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent){
-        if(event.inventory != this.settingsInventory)
+        if(event.inventory != this.inventory)
             return
 
 
@@ -66,7 +79,7 @@ class SettingsSelectionMenu(private val game: Game): Listener {
                         player.getAttribute(Attribute.MAX_HEALTH)?.baseValue = (player.getAttribute(Attribute.MAX_HEALTH)?.value)!! + 1.0
                         player.health = (player.getAttribute(Attribute.MAX_HEALTH)?.value)!!
                     }
-                    this.settingsInventory.setItem(
+                    this.inventory.setItem(
                         10,
                         createGuiItem(
                             Material.REDSTONE,
@@ -78,27 +91,38 @@ class SettingsSelectionMenu(private val game: Game): Listener {
                             "§8Rechtsklick §8zum §averringern"))
                 }
                 Material.GOLDEN_APPLE -> {
-                    Settings.uhc = !Settings.uhc
-                    this.settingsInventory.setItem(11,
+                    settings.uhc = !settings.uhc
+                    this.inventory.setItem(11,
                         createGuiItem(
                             Material.GOLDEN_APPLE,
                             "§6Ultra Hardcore",
-                            "§7Ultrahardcore ist ${if(Settings.uhc){"§aAn"}else{"§cAus"}}"))
+                            "§7Ultrahardcore ist ${if(settings.uhc){"§aAn"}else{"§cAus"}}"))
 
                 }
+                Material.BUNDLE ->{
+                    settings.backpack = !settings.backpack
+                    this.inventory.setItem(12,
+                        createGuiItem(
+                            Material.BUNDLE,
+                            "${ChatColor.GREEN}Backpack",
+                            "${ChatColor.DARK_GRAY}Backpack ist ${if(settings.backpack){"${ChatColor.GREEN}An"}else{"${ChatColor.RED}Aus"}}"
+                        )
+                    )
+                }
                 Material.PLAYER_HEAD -> {
-                    Settings.canDie = !Settings.canDie
-                    this.settingsInventory.setItem(13,
+                    settings.canDie = !settings.canDie
+                    this.inventory.setItem(13,
                         createGuiItem(
                             Material.PLAYER_HEAD,
                             "§6Sterben",
-                            "§8Sterben ist ${if(Settings.canDie){"§aErlaubt"}else{"§cnicht Erlaubt"}}",
+                            "§8Sterben ist ${if(settings.canDie){"§aErlaubt"}else{"§cnicht Erlaubt"}}",
                             "§8Wenn §cNicht Erlaubt §8ist, ist die Challenge nach dem Sterben eines Spielers vorbei"))
 
                 }
                 Material.GREEN_WOOL -> {
                     clicker.closeInventory()
-                    game.start(Settings)
+                    gamePreparation.settings = settings
+                    progressiveGameCreator.nextStep(gamePreparation)
                 }
                 else -> {}
             }
@@ -109,7 +133,7 @@ class SettingsSelectionMenu(private val game: Game): Listener {
                         (player.getAttribute(Attribute.MAX_HEALTH)?.value)!! - 1.0
                     player.health = (player.getAttribute(Attribute.MAX_HEALTH)?.value)!!
                 }
-                this.settingsInventory.setItem(
+                this.inventory.setItem(
                     10,
                     createGuiItem(
                         Material.REDSTONE,
@@ -127,7 +151,7 @@ class SettingsSelectionMenu(private val game: Game): Listener {
 
     @EventHandler
     fun inventoryCloseEvent(event: InventoryCloseEvent){
-        if(event.inventory == this.settingsInventory){
+        if(event.inventory == this.inventory){
             HandlerList.unregisterAll(this)
         }
     }

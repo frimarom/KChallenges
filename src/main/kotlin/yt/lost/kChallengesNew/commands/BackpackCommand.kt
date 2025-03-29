@@ -10,7 +10,7 @@ import yt.lost.kChallengesNew.utils.Backpack
 
 class BackpackCommand(private val game: Game): CommandExecutor {
 
-    private val backpack: Backpack = Backpack()
+    private val backpack: Backpack = Backpack(null)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if(!game.isRunning){

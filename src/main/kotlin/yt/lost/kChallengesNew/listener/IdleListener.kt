@@ -15,8 +15,9 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.ItemStack
 import yt.lost.kChallengesNew.base.Game
+import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 
-class IdleListener(private val game: Game): Listener {
+class IdleListener(private val progressiveGameCreator: ProgressiveGameCreator): Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
 
@@ -24,7 +25,7 @@ class IdleListener(private val game: Game): Listener {
 
         event.player.setPlayerListHeaderFooter("", "")
 
-        if(game.isRunning)
+        if(!progressiveGameCreator.isCreating)
             return
 
         event.player.inventory.clear()
@@ -37,35 +38,35 @@ class IdleListener(private val game: Game): Listener {
 
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {
-        if (!game.isRunning) {
+        if (progressiveGameCreator.isCreating) {
             event.isCancelled = true
         }
     }
 
     @EventHandler
     fun onFoodLevelChange(event: FoodLevelChangeEvent) {
-        if (!game.isRunning) {
+        if (progressiveGameCreator.isCreating) {
             event.isCancelled = true
         }
     }
 
     @EventHandler
     fun onEntityTarget(event: EntityTargetEvent) {
-        if (!game.isRunning && event.target is Player) {
+        if (progressiveGameCreator.isCreating && event.target is Player) {
             event.isCancelled = true
         }
     }
 
     @EventHandler
     fun onPlayerDamage(event: EntityDamageEvent) {
-        if (!game.isRunning) {
+        if (progressiveGameCreator.isCreating) {
             event.isCancelled = true
         }
     }
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        if (game.isRunning)
+        if (!progressiveGameCreator.isCreating)
             return
 
         event.isCancelled = true
@@ -73,7 +74,7 @@ class IdleListener(private val game: Game): Listener {
 
     @EventHandler
     fun onItemDrop(event: PlayerDropItemEvent) {
-        if (game.isRunning)
+        if (!progressiveGameCreator.isCreating)
             return
 
         event.isCancelled = true
@@ -81,7 +82,7 @@ class IdleListener(private val game: Game): Listener {
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent){
-        if(game.isRunning)
+        if(!progressiveGameCreator.isCreating)
             return
         if(event.inventory != event.whoClicked.inventory)
             return

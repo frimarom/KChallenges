@@ -2,7 +2,6 @@ package yt.lost.kChallengesNew.settings
 
 import org.bukkit.Bukkit
 import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
@@ -14,7 +13,7 @@ class SettingsListener(private val game: Game, private val settings: Settings): 
 
     @EventHandler
     fun onHealthRegenerate(event: EntityRegainHealthEvent){
-        if(settings.uhc && event.regainReason == EntityRegainHealthEvent.RegainReason.REGEN && event.regainReason == EntityRegainHealthEvent.RegainReason.EATING)
+        if(settings.uhc && (event.regainReason == EntityRegainHealthEvent.RegainReason.REGEN || event.regainReason == EntityRegainHealthEvent.RegainReason.EATING))
             event.isCancelled = true
     }
 
