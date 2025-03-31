@@ -1,9 +1,8 @@
 package yt.lost.kChallengesNew.base.challenges
 
-import yt.lost.kChallengesNew.base.Game
 import yt.lost.kChallengesNew.base.challenges.challengetypes.*
 
-class ChallengeCollection() {
+class ChallengeCollection {
     val challenges: MutableList<Challenge> = ArrayList()
 
     init {

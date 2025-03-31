@@ -1,13 +1,11 @@
 package yt.lost.kChallengesNew.base
 
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import yt.lost.kChallengesNew.base.challenges.ChallengeCollection
-import yt.lost.kChallengesNew.base.menus.ChallengeSelectionMenu
-import yt.lost.kChallengesNew.base.menus.GameSelectionMenu
-import yt.lost.kChallengesNew.base.menus.SettingsSelectionMenu
-import yt.lost.kChallengesNew.base.menus.TeamGameModeSelectionMenu
+import yt.lost.kChallengesNew.base.menus.*
 import yt.lost.kChallengesNew.base.teamgamemode.TeamGameModeCollection
 import yt.lost.kChallengesNew.commands.BackpackCommand
 import yt.lost.kChallengesNew.listener.IdleListener
@@ -24,6 +22,7 @@ class ProgressiveGameCreator(var currentPlayer: Player?, private val plugin: Plu
     private lateinit var teamGameModeSelectionMenu: TeamGameModeSelectionMenu
     private lateinit var challengeSelectionMenu: ChallengeSelectionMenu
     private lateinit var settingsSelectionMenu: SettingsSelectionMenu
+    private lateinit var teamSelectionMenu: TeamSelectionMenu
 
     var idleListener: IdleListener = IdleListener(this)
 
@@ -42,7 +41,7 @@ class ProgressiveGameCreator(var currentPlayer: Player?, private val plugin: Plu
                 currentPlayer?.openInventory(gameSelectionMenu.inventory)
             }
             1 ->{
-                teamGameModeSelectionMenu = TeamGameModeSelectionMenu(this, teamGameModeCollection, gamePreparation)
+                teamGameModeSelectionMenu = TeamGameModeSelectionMenu(this, gamePreparation)
                 challengeSelectionMenu = ChallengeSelectionMenu(this, challengeCollection, gamePreparation)
                 plugin.server.pluginManager.registerEvents(challengeSelectionMenu, plugin)
                 plugin.server.pluginManager.registerEvents(teamGameModeSelectionMenu, plugin)
@@ -59,6 +58,18 @@ class ProgressiveGameCreator(var currentPlayer: Player?, private val plugin: Plu
                 currentPlayer?.openInventory(settingsSelectionMenu.inventory)
             }
             3 ->{
+                if(gamePreparation.isChallenge){
+                    start(gamePreparation)
+                }else{
+                    teamSelectionMenu = TeamSelectionMenu(this, gamePreparation)
+                    plugin.server.pluginManager.registerEvents(teamSelectionMenu, plugin)
+                    for(player in Bukkit.getOnlinePlayers()){
+                        player.openInventory(teamSelectionMenu.inventory)
+                    }
+                    step += 1
+                }
+            }
+            4 ->{
                 start(gamePreparation)
             }
         }
@@ -66,10 +77,15 @@ class ProgressiveGameCreator(var currentPlayer: Player?, private val plugin: Plu
 
     fun start(gamePreparation: GamePreparation){
         isCreating = false
+        for(player in Bukkit.getOnlinePlayers()){
+            player.closeInventory()
+        }
         if(gamePreparation.isChallenge){
             var challenge: RunningChallengeGame = RunningChallengeGame(plugin, gamePreparation.challenges, gamePreparation.settings)
             (plugin as JavaPlugin).getCommand("backpack")?.setExecutor(BackpackCommand(challenge))
             challenge.start()
+        }else{
+
         }
     }
 }

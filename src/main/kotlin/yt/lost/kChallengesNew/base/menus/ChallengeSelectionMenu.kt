@@ -55,20 +55,10 @@ class ChallengeSelectionMenu(private var progressiveGameCreator: ProgressiveGame
         }
     }
 
-    @EventHandler
+    /*@EventHandler
     fun inventoryCloseEvent(event: InventoryCloseEvent){
         if(event.inventory == this.inventory){
             HandlerList.unregisterAll(this)
         }
-    }
-
-    private fun createGuiItem(material: Material, name: String, vararg lore: String?): ItemStack {
-        val item = ItemStack(material, 1)
-        val meta = item.itemMeta
-        meta?.setDisplayName(name)
-        meta?.lore = lore.toMutableList()
-        item.itemMeta = meta
-
-        return item
-    }
+    }*/
 }

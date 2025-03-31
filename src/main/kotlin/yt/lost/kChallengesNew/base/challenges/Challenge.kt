@@ -12,7 +12,7 @@ abstract class Challenge : Listener {
 
     abstract val name: String
     abstract val description: String
-    abstract var characterizedItem: ItemStack
+    abstract fun updateAndGetCharacterizedItem(): ItemStack
 
     abstract fun onStart()
 

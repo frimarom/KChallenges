@@ -28,7 +28,7 @@ class ChallengeCommand(private var plugin: Plugin,): CommandExecutor {
         }else {
             if (progressiveGameCreator.isCreating) {
                 progressiveGameCreator.currentPlayer = p0 as Player
-                progressiveGameCreator.nextStep(GamePreparation(false, Settings(), listOf(), null))
+                progressiveGameCreator.nextStep(GamePreparation(p0,false, Settings(), listOf(), null))
             } else {
                 p0.sendMessage("§cDu kannst während die Challenge läuft das Menu nicht öffnen")
             }
