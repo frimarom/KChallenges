@@ -6,17 +6,21 @@ import org.bukkit.inventory.ItemStack
 import yt.lost.kChallengesNew.base.Game
 
 abstract class Challenge : Listener {
-
     var isEnabled: Boolean = false
     var game: Game? = null
 
     abstract val name: String
     abstract val description: String
+
     abstract fun updateAndGetCharacterizedItem(): ItemStack
 
     abstract fun onStart()
 
-    protected fun createGuiItem(material: Material, name: String, vararg lore: String?): ItemStack {
+    protected fun createGuiItem(
+        material: Material,
+        name: String,
+        vararg lore: String?,
+    ): ItemStack {
         val item = ItemStack(material, 1)
         val meta = item.itemMeta
         meta?.setDisplayName(name)

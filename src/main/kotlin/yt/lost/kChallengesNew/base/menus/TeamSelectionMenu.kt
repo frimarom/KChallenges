@@ -7,73 +7,109 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
+import org.bukkit.scheduler.BukkitRunnable
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 import yt.lost.kChallengesNew.base.teamgamemode.Team
-import yt.lost.kChallengesNew.base.teamgamemode.TeamGameMode
 
-class TeamSelectionMenu(private val progressiveGameCreator: ProgressiveGameCreator,
-                        gamePreparation: GamePreparation) : SelectionMenu(gamePreparation) {
+class TeamSelectionMenu(
+    private val progressiveGameCreator: ProgressiveGameCreator,
+    private val plugin: Plugin,
+    gamePreparation: GamePreparation,
+) : SelectionMenu(gamePreparation) {
     override val inventory: Inventory = Bukkit.createInventory(null, InventoryType.BARREL, "Team Auswahl:")
 
     init {
-        repeat(gamePreparation.settings.teamAmount){ i ->
-            val dyeColor = DyeColor.entries[i]
+        val colors = DyeColor.entries.shuffled()
+        repeat(gamePreparation.settings.teamAmount) { i ->
+            val dyeColor = colors[i]
             val material = Material.matchMaterial("${dyeColor.name}_BED")
             val chatColor = dyeColorToChatColor(dyeColor)
-            val team = Team(chatColor, "$chatColor Team ${dyeColor.name}",i, material!!)
+            val team = Team(chatColor, "$chatColor Team ${dyeColor.name}", i, material!!)
             gamePreparation.teams.add(team)
         }
         for (team in gamePreparation.teams) {
             inventory.setItem(team.invLocation, gamePreparation.teams[team.invLocation].updateAndGetCharacterizedItem())
         }
-        this.inventory.setItem(26,
+        this.inventory.setItem(
+            26,
             createGuiItem(
                 Material.GREEN_WOOL,
-                "Starten"
-            )
+                "Starten",
+            ),
         )
     }
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
-        if(event.inventory != this.inventory)
+        if (event.inventory != this.inventory) {
             return
+        }
 
         event.isCancelled = true
         val clicker = event.whoClicked as Player
 
         val item: ItemStack? = event.currentItem
 
-
-        if(item?.type != Material.GREEN_WOOL && item?.type != Material.GRAY_STAINED_GLASS_PANE) {
-            for(team in gamePreparation.teams){
-                if(team.updateAndGetCharacterizedItem().type == item?.type){
-                    val previousTeam = gamePreparation.playerTeams[clicker]
-                    if(previousTeam != null) {
-                        previousTeam.member.remove(clicker)
-                        inventory.setItem(previousTeam.invLocation, previousTeam.updateAndGetCharacterizedItem())
-                    }
-                    team.member.add(clicker)
-                    gamePreparation.playerTeams[clicker] = team
-                    inventory.setItem(team.invLocation, team.updateAndGetCharacterizedItem())
+        if (item?.type != Material.GREEN_WOOL && item?.type != Material.GRAY_STAINED_GLASS_PANE) {
+            for (team in gamePreparation.teams) {
+                if (team.updateAndGetCharacterizedItem().type == item?.type) {
+                    addPlayerToTeam(clicker, team)
                 }
             }
-        } else if(item.type == Material.GREEN_WOOL){
-            if(clicker == gamePreparation.admin){
+        } else if (item.type == Material.GREEN_WOOL) {
+            if (clicker == gamePreparation.admin) {
+                autofillRemainingPlayer()
                 progressiveGameCreator.nextStep(gamePreparation)
-            }else{
+            } else {
                 clicker.sendMessage("${ChatColor.RED}Nur der Admin kann die Challenge starten")
             }
         }
     }
 
-    //ich glaub ich bring mich um
-    private fun dyeColorToChatColor(dyeColor: DyeColor): ChatColor {
-        return when (dyeColor) {
+    @EventHandler
+    fun onInventoryClose(event: InventoryCloseEvent) {
+        if (event.inventory != this.inventory) {
+            return
+        }
+
+        object : BukkitRunnable() {
+            override fun run() {
+                event.player.openInventory(inventory)
+            }
+        }.runTaskLater(plugin, 1)
+    }
+
+    private fun addPlayerToTeam(
+        player: Player,
+        team: Team,
+    ) {
+        val previousTeam = gamePreparation.playerTeams[player]
+        if (previousTeam != null) {
+            previousTeam.member.remove(player)
+            inventory.setItem(previousTeam.invLocation, previousTeam.updateAndGetCharacterizedItem())
+        }
+        team.member.add(player)
+        gamePreparation.playerTeams[player] = team
+        inventory.setItem(team.invLocation, team.updateAndGetCharacterizedItem())
+    }
+
+    private fun autofillRemainingPlayer() {
+        for (player in Bukkit.getOnlinePlayers()) {
+            if (gamePreparation.playerTeams[player] != null) {
+                continue
+            }
+        }
+    }
+
+    // ich glaub ich bring mich um
+    private fun dyeColorToChatColor(dyeColor: DyeColor): ChatColor =
+        when (dyeColor) {
             DyeColor.WHITE -> ChatColor.WHITE
             DyeColor.ORANGE -> ChatColor.GOLD
             DyeColor.MAGENTA -> ChatColor.LIGHT_PURPLE
@@ -91,5 +127,4 @@ class TeamSelectionMenu(private val progressiveGameCreator: ProgressiveGameCreat
             DyeColor.RED -> ChatColor.DARK_RED
             DyeColor.BLACK -> ChatColor.BLACK
         }
-    }
 }
