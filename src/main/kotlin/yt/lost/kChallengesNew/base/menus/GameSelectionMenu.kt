@@ -56,11 +56,11 @@ class GameSelectionMenu(
 
         when (item?.type) {
             Material.GOLD_BLOCK -> {
-                gamePreparation.isChallenge = false
+                gamePreparation.settings.isChallenge = false
                 progressiveGameCreator.nextStep(gamePreparation)
             }
             Material.NETHERITE_PICKAXE -> {
-                gamePreparation.isChallenge = true
+                gamePreparation.settings.isChallenge = true
                 progressiveGameCreator.nextStep(gamePreparation)
             }
             else -> {}

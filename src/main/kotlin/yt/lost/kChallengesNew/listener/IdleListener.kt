@@ -14,19 +14,20 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.ItemStack
-import yt.lost.kChallengesNew.base.Game
 import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 
-class IdleListener(private val progressiveGameCreator: ProgressiveGameCreator): Listener {
+class IdleListener(
+    private val progressiveGameCreator: ProgressiveGameCreator,
+) : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
-
         event.joinMessage = "§7>>§kh§r§a${event.player.name}§r§kh"
 
         event.player.setPlayerListHeaderFooter("", "")
 
-        if(!progressiveGameCreator.isCreating)
+        if (!progressiveGameCreator.isCreating) {
             return
+        }
 
         event.player.inventory.clear()
     }
@@ -66,29 +67,32 @@ class IdleListener(private val progressiveGameCreator: ProgressiveGameCreator): 
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        if (!progressiveGameCreator.isCreating)
+        if (!progressiveGameCreator.isCreating) {
             return
+        }
 
         event.isCancelled = true
     }
 
     @EventHandler
     fun onItemDrop(event: PlayerDropItemEvent) {
-        if (!progressiveGameCreator.isCreating)
+        if (!progressiveGameCreator.isCreating) {
             return
+        }
 
         event.isCancelled = true
     }
 
     @EventHandler
-    fun onInventoryClick(event: InventoryClickEvent){
-        if(!progressiveGameCreator.isCreating)
+    fun onInventoryClick(event: InventoryClickEvent) {
+        if (!progressiveGameCreator.isCreating) {
             return
-        if(event.inventory != event.whoClicked.inventory)
+        }
+        if (event.inventory != event.whoClicked.inventory) {
             return
+        }
 
         event.isCancelled = true
-
 
         val item: ItemStack? = event.currentItem
 

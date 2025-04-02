@@ -4,8 +4,10 @@ import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
 import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
 import yt.lost.kChallengesNew.base.teamgamemode.TeamGameMode
 import yt.lost.kChallengesNew.base.teamgamemode.TeamGameScoreboard
+import yt.lost.kChallengesNew.commands.BackpackCommand
 import yt.lost.kChallengesNew.settings.SettingsListener
 import yt.lost.kChallengesNew.utils.Timer
 import yt.lost.kChallengesNew.utils.TimerType
@@ -16,7 +18,7 @@ class RunningTeamGame(
 ) : Game() {
     override val isRunning: Boolean
         get() = timer.running
-    override val timer: Timer = Timer(TimerType.DOWNWARDS, plugin)
+    override val timer: Timer = Timer(TimerType.DOWNWARDS, plugin, this)
 
     private val settingsListener: SettingsListener
     private val activeTeamGameMode: TeamGameMode
@@ -26,8 +28,9 @@ class RunningTeamGame(
     init {
         this.settings = gamePreparation.settings
         activeTeamGameMode = gamePreparation.teamGameMode!!
-        settingsListener = SettingsListener(this, settings)
+        settingsListener = SettingsListener(this, gamePreparation)
         currentScoreboard = TeamGameScoreboard(gamePreparation)
+        (plugin as JavaPlugin).getCommand("backpack")?.setExecutor(BackpackCommand(this, gamePreparation))
     }
 
     override fun start() {
@@ -55,6 +58,6 @@ class RunningTeamGame(
     }
 
     override fun stop(cause: String) {
-        TODO("Not yet implemented")
+        activeTeamGameMode.onStop()
     }
 }

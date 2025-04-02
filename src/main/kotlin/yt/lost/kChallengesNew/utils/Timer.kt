@@ -5,10 +5,12 @@ import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
+import yt.lost.kChallengesNew.base.Game
 
 class Timer(
     timerType: TimerType,
     private val plugin: Plugin,
+    private val game: Game,
 ) {
     var running: Boolean = false
 
@@ -24,8 +26,11 @@ class Timer(
                     if (timerType == TimerType.UPWARDS) {
                         currentTime += 1
                     } else {
-                        if (currentTime >= 0) {
+                        if (currentTime > 0) {
                             currentTime -= 1
+                        } else {
+                            game.stop("Der Timer ist vorbei!")
+                            running = false
                         }
                     }
                 } else {

@@ -1,5 +1,6 @@
 package yt.lost.kChallengesNew.base.teamgamemode
 
+import org.bukkit.Material
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import yt.lost.kChallengesNew.base.GamePreparation
@@ -18,4 +19,22 @@ abstract class TeamGameMode : Listener {
     abstract fun onStop()
 
     abstract fun updateAndGetCharacterizedItem(): ItemStack
+
+    abstract fun updateScoreboardForAllPlayers()
+
+    abstract fun updateScoreboardForTeam()
+
+    protected fun createGuiItem(
+        material: Material,
+        name: String,
+        vararg lore: String?,
+    ): ItemStack {
+        val item = ItemStack(material, 1)
+        val meta = item.itemMeta
+        meta?.setDisplayName(name)
+        meta?.lore = lore.toMutableList()
+        item.itemMeta = meta
+
+        return item
+    }
 }

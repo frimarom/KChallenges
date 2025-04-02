@@ -104,6 +104,10 @@ class TeamSelectionMenu(
             if (gamePreparation.playerTeams[player] != null) {
                 continue
             }
+            val sortedTeams = gamePreparation.teams.sortedBy { it.member.size }
+            val lowestTeam = sortedTeams[0]
+            lowestTeam.member.add(player)
+            player.sendMessage("Du wurdest dem Team ${lowestTeam.name} automatisch hinzugefügt")
         }
     }
 

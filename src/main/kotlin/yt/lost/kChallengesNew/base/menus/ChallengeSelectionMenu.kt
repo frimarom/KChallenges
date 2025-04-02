@@ -14,11 +14,12 @@ import yt.lost.kChallengesNew.base.challenges.ChallengeCollection
 
 class ChallengeSelectionMenu(
     private var progressiveGameCreator: ProgressiveGameCreator,
-    private var challengeCollection: ChallengeCollection,
     gamePreparation: GamePreparation,
 ) : SelectionMenu(gamePreparation),
     Listener {
     override var inventory: Inventory = Bukkit.createInventory(null, 54, "Challenges")
+
+    private val challengeCollection: ChallengeCollection = ChallengeCollection()
 
     init {
         for (challenge in challengeCollection.challenges) {

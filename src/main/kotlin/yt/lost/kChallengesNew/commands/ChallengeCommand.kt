@@ -11,13 +11,9 @@ import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 import yt.lost.kChallengesNew.settings.Settings
 
 class ChallengeCommand(
-    private var plugin: Plugin,
+    plugin: Plugin,
 ) : CommandExecutor {
-    private var progressiveGameCreator: ProgressiveGameCreator
-
-    init {
-        progressiveGameCreator = ProgressiveGameCreator(null, plugin)
-    }
+    private var progressiveGameCreator: ProgressiveGameCreator = ProgressiveGameCreator(null, plugin)
 
     override fun onCommand(
         p0: CommandSender,
@@ -35,7 +31,7 @@ class ChallengeCommand(
         } else {
             if (progressiveGameCreator.isCreating) {
                 progressiveGameCreator.currentPlayer = p0 as Player
-                progressiveGameCreator.nextStep(GamePreparation(p0, false, Settings(), listOf(), null))
+                progressiveGameCreator.nextStep(GamePreparation(p0, Settings(), listOf(), null))
             } else {
                 p0.sendMessage("§cDu kannst während die Challenge läuft das Menu nicht öffnen")
             }

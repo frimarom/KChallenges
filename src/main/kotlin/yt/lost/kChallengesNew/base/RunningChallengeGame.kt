@@ -6,27 +6,27 @@ import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
-import yt.lost.kChallengesNew.base.challenges.Challenge
-import yt.lost.kChallengesNew.settings.Settings
+import yt.lost.kChallengesNew.commands.BackpackCommand
 import yt.lost.kChallengesNew.settings.SettingsListener
 import yt.lost.kChallengesNew.utils.Timer
 import yt.lost.kChallengesNew.utils.TimerType
 
 class RunningChallengeGame(
     private val plugin: Plugin,
-    private val activeChallenges: List<Challenge>,
-    settings: Settings,
+    private val gamePreparation: GamePreparation,
 ) : Game() {
     override val isRunning: Boolean
         get() = timer.running
-    override val timer: Timer = Timer(TimerType.UPWARDS, plugin)
+    override val timer: Timer = Timer(TimerType.UPWARDS, plugin, this)
 
     private var settingsListener: SettingsListener
 
     init {
-        this.settings = settings
-        settingsListener = SettingsListener(this, settings)
+        this.settings = gamePreparation.settings
+        settingsListener = SettingsListener(this, gamePreparation)
+        (plugin as JavaPlugin).getCommand("backpack")?.setExecutor(BackpackCommand(this, gamePreparation))
     }
 
     override fun start() {
@@ -41,7 +41,7 @@ class RunningChallengeGame(
         for (player in Bukkit.getOnlinePlayers()) {
             player.sendTitle("§aDer Timer", "§7wurde gestartet", 5, 40, 5)
 
-            player.sendMessage("§8Das Spiel wurde mit den Challenges §7${activeChallenges.map { it.name }} §8gestartet")
+            player.sendMessage("§8Das Spiel wurde mit den Challenges §7${gamePreparation.challenges.map { it.name }} §8gestartet")
 
             player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 5f, 5f)
 
@@ -51,7 +51,7 @@ class RunningChallengeGame(
             player.inventory.clear()
         }
 
-        for (challenge in activeChallenges) {
+        for (challenge in gamePreparation.challenges) {
             challenge.game = this
             plugin.server.pluginManager.registerEvents(challenge, plugin)
             challenge.onStart()
@@ -82,7 +82,7 @@ class RunningChallengeGame(
             player.gameMode = GameMode.SPECTATOR
         }
 
-        for (challenge in activeChallenges) {
+        for (challenge in gamePreparation.challenges) {
             HandlerList.unregisterAll(challenge)
         }
 
