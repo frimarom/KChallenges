@@ -4,24 +4,18 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageEvent
-import org.bukkit.inventory.ItemStack
 import yt.lost.kChallengesNew.base.challenges.Challenge
 
 class NoDamageChallenge : Challenge() {
-    override val name: String = "No Damage"
-    override val description: String = "Die Spieler dürfen keinen Schaden bekommen"
+    init {
+        material = Material.REDSTONE_BLOCK
+        name = "No Damage"
+        description = listOf("Die Spieler dürfen keinen Schaden bekommen")
+    }
 
     override fun onStart() {
         TODO("Not yet implemented")
     }
-
-    override fun updateAndGetCharacterizedItem(): ItemStack =
-        createGuiItem(
-            Material.REDSTONE_BLOCK,
-            "§a$name",
-            "§7$description",
-            "§7Status: " + if (isEnabled) "§aAn" else "§cAus",
-        )
 
     @EventHandler
     fun onDamage(event: EntityDamageEvent) {

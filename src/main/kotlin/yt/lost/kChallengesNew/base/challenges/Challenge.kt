@@ -1,5 +1,6 @@
 package yt.lost.kChallengesNew.base.challenges
 
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
@@ -9,10 +10,17 @@ abstract class Challenge : Listener {
     var isEnabled: Boolean = false
     var game: Game? = null
 
-    abstract val name: String
-    abstract val description: String
+    var material: Material = Material.AIR
+    var name: String = ""
+    var description: List<String> = listOf()
 
-    abstract fun updateAndGetCharacterizedItem(): ItemStack
+    fun updateAndGetCharacterizedItem(): ItemStack =
+        createGuiItem(
+            material,
+            "${ChatColor.GREEN}$name",
+            *description.map { "${ChatColor.GRAY}$it" }.toTypedArray(),
+            "${ChatColor.GRAY}Status: " + if (isEnabled) "§aAn" else "§cAus",
+        )
 
     abstract fun onStart()
 

@@ -5,13 +5,15 @@ import org.bukkit.entity.Entity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
-import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import yt.lost.kChallengesNew.base.challenges.Challenge
 
 class MoreKnockbackChallenge : Challenge() {
-    override val name: String = "More Knockback"
-    override var description: String = "Jeder Spieler hat 20mal mehr Knockback"
+    init {
+        material = Material.FEATHER
+        name = "More Knockback"
+        description = listOf("Jeder Spieler und Mob hat 20 mal mehr Knockback")
+    }
 
     @EventHandler
     fun onEntityDamage(event: EntityDamageEvent) {
@@ -32,9 +34,6 @@ class MoreKnockbackChallenge : Challenge() {
                 .normalize()
                 .multiply(20)
     }
-
-    override fun updateAndGetCharacterizedItem(): ItemStack =
-        createGuiItem(Material.FEATHER, "§a$name", "§7$description", "§7Status: " + if (isEnabled) "§aAn" else "§cAus")
 
     override fun onStart() {
     }

@@ -1,6 +1,10 @@
 package yt.lost.kChallengesNew.base
 
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.GameMode
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
@@ -8,6 +12,7 @@ import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
+import yt.lost.kChallengesNew.base.challenges.Challenge
 import yt.lost.kChallengesNew.commands.BackpackCommand
 import yt.lost.kChallengesNew.settings.SettingsListener
 import yt.lost.kChallengesNew.utils.Timer
@@ -38,10 +43,14 @@ class RunningChallengeGame(
 
         plugin.server.pluginManager.registerEvents(settingsListener, plugin)
 
+        val challengeText = TextComponent("Das Spiel wurde mit den Challenges").apply { color = net.md_5.bungee.api.ChatColor.GRAY }
+        challengeText.addExtra(getChallengeDescriptionHoverEffectList(this.gamePreparation.challenges))
+        challengeText.addExtra(TextComponent("gestartet").apply { color = net.md_5.bungee.api.ChatColor.GRAY })
+
         for (player in Bukkit.getOnlinePlayers()) {
             player.sendTitle("§aDer Timer", "§7wurde gestartet", 5, 40, 5)
 
-            player.sendMessage("§8Das Spiel wurde mit den Challenges §7${gamePreparation.challenges.map { it.name }} §8gestartet")
+            player.spigot().sendMessage(challengeText)
 
             player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 5f, 5f)
 
@@ -87,5 +96,20 @@ class RunningChallengeGame(
         }
 
         HandlerList.unregisterAll(settingsListener)
+    }
+
+    private fun getChallengeDescriptionHoverEffectList(activeChallenges: List<Challenge>): TextComponent {
+        val message = TextComponent(" ")
+
+        for (challenge in activeChallenges) {
+            val hoverPart = TextComponent(challenge.name)
+
+            hoverPart.color = net.md_5.bungee.api.ChatColor.GREEN
+            hoverPart.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(challenge.description.joinToString(" ")))
+
+            message.addExtra(hoverPart)
+            message.addExtra(" ")
+        }
+        return message
     }
 }

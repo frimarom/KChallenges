@@ -8,10 +8,13 @@ import yt.lost.kChallengesNew.base.challenges.Challenge
 import java.util.*
 
 class RandomizerChallenge : Challenge() {
-    override val name: String = "Block Randomizing Challenge"
-    override val description: String = "Die Drops von Blöcken werden zufällig vertauscht"
-
     private var blocksDrops: MutableMap<Material, List<Material>> = mutableMapOf()
+
+    init {
+        material = Material.CHEST
+        name = "Block Randomizing Challenge"
+        description = listOf("Die Drops von Blöcken werden zufällig vertauscht")
+    }
 
     override fun onStart() {
         val allBlocks = Material.values().filter { it.isBlock }.shuffled()
@@ -55,7 +58,4 @@ class RandomizerChallenge : Challenge() {
             }
         }
     }
-
-    override fun updateAndGetCharacterizedItem(): ItemStack =
-        createGuiItem(Material.CHEST, "§a$name", "§7$description", "§7Status: " + if (isEnabled) "§aAn" else "§cAus")
 }

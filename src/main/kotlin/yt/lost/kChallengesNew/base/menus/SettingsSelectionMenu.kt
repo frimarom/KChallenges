@@ -16,7 +16,7 @@ class SettingsSelectionMenu(
     gamePreparation: GamePreparation,
 ) : SelectionMenu(gamePreparation) {
     override var inventory: Inventory = Bukkit.createInventory(null, InventoryType.BARREL, "Einstellungen")
-    private val settings: Settings = Settings()
+    private val settings: Settings = gamePreparation.settings
 
     init {
         if (!gamePreparation.settings.isChallenge) {

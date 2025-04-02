@@ -1,6 +1,7 @@
 package yt.lost.kChallengesNew.base.teamgamemode.gamemodes
 
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.advancement.Advancement
 import org.bukkit.event.EventHandler
@@ -34,7 +35,11 @@ class AchievementBattle : TeamGameMode() {
     }
 
     override fun updateAndGetCharacterizedItem(): ItemStack =
-        createGuiItem(Material.ENCHANTED_GOLDEN_APPLE, "Achievement Battle", "Welches Team sammelt die meisten Achievements?")
+        createGuiItem(
+            Material.ENCHANTED_GOLDEN_APPLE,
+            "${ChatColor.GREEN}Achievement Battle",
+            "${ChatColor.GRAY}Welches Team sammelt die meisten Achievements?",
+        )
 
     override fun updateScoreboardForAllPlayers() {
         TODO("Not yet implemented")

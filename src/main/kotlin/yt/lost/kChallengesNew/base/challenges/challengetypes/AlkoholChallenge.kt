@@ -14,27 +14,21 @@ import yt.lost.kChallengesNew.base.challenges.Challenge
 import java.util.*
 
 class AlkoholChallenge : Challenge() {
-    /*
-     * SchildBlock
-     * BlazeKill
-     * EndermanKill
-     * Dia abbauen
-     * Tot
-     * Random Block List to Avoid
-     *
-     * */
-    override val name: String = "Alkohol Challenge"
-    override val description: String = "Für verschiedene "
-
     private var mustDrink: Boolean = false
     private var drinker: Player? = null
     private var continuingItem: ItemStack =
         createGuiItem(
             Material.HONEY_BOTTLE,
-            "ICH HAB GETRUNKEN",
-            "Rechtsklick auf dieses Item wenn du getrunken hast damit du dich wieder bewegen kannst",
+            "${ChatColor.GREEN}ICH HAB GETRUNKEN",
+            "${ChatColor.GRAY}Rechtsklick auf dieses Item wenn du getrunken hast damit du dich wieder bewegen kannst",
         )
     private var forbiddenBlocks: List<Material> = ArrayList()
+
+    init {
+        material = Material.HONEY_BOTTLE
+        name = "Alkohol Challenge"
+        description = listOf("Für verschiedene Sachen die du tust", "musst du in Reallife Alkohol oder", "ein Getränk deiner Wahl trinken")
+    }
 
     override fun onStart() {
         Bukkit.getOnlinePlayers().forEach { player -> player.inventory.setItemInOffHand(continuingItem) }
@@ -66,7 +60,7 @@ class AlkoholChallenge : Challenge() {
     @EventHandler
     fun onItemDrop(event: PlayerDropItemEvent) {
         if (event.itemDrop.itemStack == continuingItem) {
-            event.player.sendMessage("Vollen Alkohol wirft man nicht weg!")
+            event.player.sendMessage("${ChatColor.DARK_RED}Vollen Alkohol wirft man nicht weg!")
             event.isCancelled = true
         }
     }
@@ -108,27 +102,13 @@ class AlkoholChallenge : Challenge() {
             event.isCancelled = true
             if (mustDrink) {
                 if (event.player == drinker) {
-                    continueGame(event.player)
+                    continueGame()
                 }
             }
         }
     }
 
-    /*@EventHandler
-    fun onItemEntityUse(event: PlayerInteractEntityEvent){
-        if(event.item?.type == continuingItem.type){
-            if(mustDrink) {
-                if (event.player == drinker) {
-                    continueGame(event.player)
-                }
-            }
-        }
-    }*/
-
-    override fun updateAndGetCharacterizedItem(): ItemStack =
-        createGuiItem(Material.HONEY_BOTTLE, "§a$name", "§7$description", "§7Status: " + if (isEnabled) "§aAn" else "§cAus")
-
-    private fun continueGame(player: Player) {
+    private fun continueGame() {
         mustDrink = false
         drinker = null
 

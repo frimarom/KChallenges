@@ -33,7 +33,7 @@ class ChallengeCommand(
                 progressiveGameCreator.currentPlayer = p0 as Player
                 progressiveGameCreator.nextStep(GamePreparation(p0, Settings(), listOf(), null))
             } else {
-                p0.sendMessage("§cDu kannst während die Challenge läuft das Menu nicht öffnen")
+                p0.sendMessage("${ChatColor.RED}Du kannst während die Challenge läuft das Menu nicht öffnen")
             }
         }
         return true

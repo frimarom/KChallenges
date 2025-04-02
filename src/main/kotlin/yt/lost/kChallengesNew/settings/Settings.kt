@@ -189,6 +189,15 @@ class Settings(
                 manualResultReveal = !manualResultReveal
             }, {}),
         )
+        settingsList.add(
+            Setting({
+                createGuiItem(
+                    Material.NETHERITE_SWORD,
+                    "PVP",
+                    "",
+                )
+            }, { pvp = !pvp }, {}),
+        )
     }
 
     private fun formatTime(seconds: Int): String {
