@@ -26,4 +26,9 @@ class KChallengesNew : JavaPlugin() {
     override fun onDisable() {
         // Plugin shutdown logic
     }
+
+    /* Features
+     * -pause challenge
+     * -sachen anzeigen die man schon gemacht hat bspw in achievementbattle
+     * */
 }

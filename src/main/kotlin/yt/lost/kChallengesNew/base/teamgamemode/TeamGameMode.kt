@@ -3,6 +3,7 @@ package yt.lost.kChallengesNew.base.teamgamemode
 import org.bukkit.Material
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.RunningTeamGame
 
@@ -23,6 +24,8 @@ abstract class TeamGameMode : Listener {
     abstract fun updateScoreboardForAllPlayers()
 
     abstract fun updateScoreboardForTeam()
+
+    abstract fun revealResult(plugin: Plugin)
 
     protected fun createGuiItem(
         material: Material,

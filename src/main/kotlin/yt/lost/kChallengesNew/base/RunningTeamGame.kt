@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import yt.lost.kChallengesNew.base.teamgamemode.TeamGameMode
 import yt.lost.kChallengesNew.base.teamgamemode.TeamGameScoreboard
 import yt.lost.kChallengesNew.commands.BackpackCommand
+import yt.lost.kChallengesNew.commands.RevealResultsCommand
 import yt.lost.kChallengesNew.settings.SettingsListener
 import yt.lost.kChallengesNew.utils.Timer
 import yt.lost.kChallengesNew.utils.TimerType
@@ -28,9 +29,11 @@ class RunningTeamGame(
 
     init {
         this.settings = gamePreparation.settings
+        settingsListener = SettingsListener(this, settings)
+
         activeTeamGameMode = gamePreparation.teamGameMode!!
-        settingsListener = SettingsListener(this, gamePreparation)
         currentScoreboard = TeamGameScoreboard(gamePreparation)
+
         (plugin as JavaPlugin).getCommand("backpack")?.setExecutor(BackpackCommand(this, gamePreparation))
     }
 
@@ -59,6 +62,18 @@ class RunningTeamGame(
     }
 
     override fun stop(cause: String) {
+        // idlelistener wieder adden
+        // spieler nach 3 sek tpen
+        for (player in Bukkit.getOnlinePlayers()) {
+            player.sendTitle("${ChatColor.GOLD}Das Spiel", "${ChatColor.RED}ist vorbei", 5, 40, 5)
+            player.playSound(player.location, Sound.ENTITY_ENDER_DRAGON_GROWL, 1f, 1f)
+        }
+        if (settings.manualResultReveal) {
+            (plugin as JavaPlugin).getCommand("result")?.setExecutor(RevealResultsCommand(activeTeamGameMode, plugin))
+            Bukkit.broadcastMessage(
+                "${ChatColor.GRAY}Der Starter des Spiels muss jetzt ${ChatColor.GREEN}/reveal ${ChatColor.GRAY}machen damit die Ergebnisse angezeigt werden",
+            )
+        }
         activeTeamGameMode.onStop()
     }
 }

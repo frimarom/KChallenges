@@ -30,7 +30,7 @@ class GameSelectionMenu(
             createGuiItem(
                 Material.GOLD_BLOCK,
                 "${ChatColor.GOLD}Team-Gamemodes",
-                "Stay tuned!\n${ChatColor.GRAY}Spiele Spiele wie Achievement Hunt etc",
+                "${ChatColor.GRAY}Spiele verschiedene Spiele wie ${ChatColor.GREEN}Achievement Battle${ChatColor.GRAY} als Teams gegeneinander",
             ),
         )
         inventory.setItem(
@@ -38,8 +38,8 @@ class GameSelectionMenu(
             createGuiItem(
                 Material.NETHERITE_PICKAXE,
                 "${ChatColor.GOLD}Challenges",
-                "${ChatColor.GRAY}Versuche Minecraft mit einer bestimmten \n" +
-                    "Einschränkung durchzuspielen",
+                "${ChatColor.GRAY}Versuche Minecraft mit einer bestimmten",
+                "${ChatColor.GRAY}Einschränkung durchzuspielen",
             ),
         )
     }

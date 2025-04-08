@@ -1,5 +1,5 @@
 name: KChallengesNew
-version: '1.0-SNAPSHOT'
+version: '1.1.0'
 main: yt.lost.kChallengesNew.KChallengesNew
 api-version: '1.21'
 commands:
@@ -8,3 +8,7 @@ commands:
   backpack:
     aliases:
       - bp
+  result:
+    description: reveal result
+    aliases:
+      - reveal

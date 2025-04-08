@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
 class Settings(
@@ -16,6 +17,7 @@ class Settings(
     var teamAmount: Int = 1,
     var timerCountdown: Int = 3600,
     var manualResultReveal: Boolean = false,
+    var scoreboard: Boolean = false,
 ) {
     val settingsList: MutableList<Setting> = mutableListOf()
 
@@ -25,6 +27,7 @@ class Settings(
                 createGuiItem(
                     Material.GOLDEN_APPLE,
                     "§6Ultra Hardcore",
+                    "",
                     "§8Ultrahardcore ist ${if (uhc){
                         "§aAn"
                     }else {
@@ -38,6 +41,7 @@ class Settings(
                 createGuiItem(
                     Material.REDSTONE,
                     "§cMaximale Leben ",
+                    "",
                     "§8Maximale Leben: §7${
                         Bukkit
                             .getOnlinePlayers()
@@ -70,6 +74,7 @@ class Settings(
                 createGuiItem(
                     Material.BUNDLE,
                     "${ChatColor.GREEN}Backpack",
+                    "",
                     "${ChatColor.DARK_GRAY}Backpack ist ${if (backpack){
                         "${ChatColor.GREEN}An"
                     }else {
@@ -85,12 +90,14 @@ class Settings(
                 createGuiItem(
                     Material.PLAYER_HEAD,
                     "§6Sterben",
+                    "",
                     "§8Sterben ist ${if (canDie){
                         "§aErlaubt"
                     }else {
                         "§cnicht Erlaubt"
                     }}",
-                    "§8Wenn §cNicht Erlaubt §8ist, ist die Challenge nach dem Sterben eines Spielers vorbei",
+                    "${ChatColor.DARK_GRAY}Wenn ${ChatColor.RED}Nicht Erlaubt ${ChatColor.DARK_GRAY}ist, ist die Challenge",
+                    "${ChatColor.DARK_GRAY}nach dem Sterben eines Spielers vorbei",
                 )
             }, {
                 canDie = !canDie
@@ -100,11 +107,13 @@ class Settings(
             Setting({
                 createGuiItem(
                     Material.WHITE_BED,
-                    "Anzahl Teams",
-                    "Nur bei Team Game Modes verfügbar!",
-                    "Anzahl: $teamAmount",
-                    "Linksklick +1 Team",
-                    "Rechtsklick -1 Team",
+                    "${ChatColor.GOLD}Anzahl Teams",
+                    "",
+                    "${ChatColor.RED}Nur bei Team Game Modes verfügbar!",
+                    "${ChatColor.DARK_GRAY}Wie viele Teams gibt es?",
+                    "${ChatColor.DARK_GRAY}Anzahl: ${ChatColor.GREEN}$teamAmount",
+                    "${ChatColor.DARK_GRAY}Linksklick ${ChatColor.GOLD}+1 Team",
+                    "${ChatColor.DARK_GRAY}Rechtsklick ${ChatColor.GOLD}-1 Team",
                 )
             }, {
                 if (isChallenge) {
@@ -132,11 +141,13 @@ class Settings(
             Setting({
                 createGuiItem(
                     Material.CLOCK,
-                    "Timer Countdown",
-                    "Nur bei Team Game Modes verfügbar!",
-                    "Zeit: ${formatTime(timerCountdown)}",
-                    "Linksklick +10 min",
-                    "Rechtsklick -10 min",
+                    "${ChatColor.GOLD}Timer Countdown",
+                    " ",
+                    "${ChatColor.RED}Nur bei Team Game Modes verfügbar!",
+                    "${ChatColor.DARK_GRAY}Wie lange soll das Spiel gehen?",
+                    "${ChatColor.DARK_GRAY}Zeit: ${ChatColor.GREEN}${formatTime(timerCountdown)}",
+                    "${ChatColor.DARK_GRAY}Linksklick ${ChatColor.GOLD}+10 min",
+                    "${ChatColor.DARK_GRAY}Rechtsklick ${ChatColor.GOLD}-10 min",
                 )
             }, {
                 if (isChallenge) {
@@ -160,8 +171,10 @@ class Settings(
             Setting({
                 createGuiItem(
                     Material.SKELETON_SKULL,
-                    "Spectator",
-                    "Spectator sind: ${if (spectator){
+                    "${ChatColor.GOLD}Spectator",
+                    "",
+                    "${ChatColor.DARK_GRAY}Dürfen andere Spieler zuschauen?",
+                    "${ChatColor.DARK_GRAY}Spectator sind: ${if (spectator){
                         "${ChatColor.GREEN}An"
                     }else {
                         "${ChatColor.RED}Aus"
@@ -176,9 +189,11 @@ class Settings(
             Setting({
                 createGuiItem(
                     Material.FILLED_MAP,
-                    "Manueller Ergebnis anzeigen",
-                    "Wenn ",
-                    "Manuelle Ergebnis Anzeige ist: ${if (manualResultReveal){
+                    "${ChatColor.GOLD}Manuell Ergebnis anzeigen",
+                    "",
+                    "${ChatColor.DARK_GRAY}Wenn ${ChatColor.GREEN}An ${ChatColor.DARK_GRAY}ist dann werden die Ergebnisse ",
+                    "${ChatColor.DARK_GRAY}erst angezeigt nachdem man ${ChatColor.GREEN}/reveal${ChatColor.DARK_GRAY} macht",
+                    "${ChatColor.DARK_GRAY}Manuelle-Ergebnis-Anzeige ist: ${if (manualResultReveal){
                         "${ChatColor.GREEN}An"
                     }else {
                         "${ChatColor.RED}Aus"
@@ -193,10 +208,28 @@ class Settings(
             Setting({
                 createGuiItem(
                     Material.NETHERITE_SWORD,
-                    "PVP",
+                    "${ChatColor.GOLD}PVP",
+                    "",
                     "",
                 )
             }, { pvp = !pvp }, {}),
+        )
+        settingsList.add(
+            Setting({
+                createGuiItem(
+                    Material.BOOK,
+                    "${ChatColor.GOLD}Scoreboard",
+                    "",
+                    "${ChatColor.DARK_GRAY}Soll man einen rechts einen Zwischenstand",
+                    "${ChatColor.DARK_GRAY}der Ergebnisse sehen?",
+                    "${ChatColor.DARK_GRAY}Scoreboard ist: ${if (scoreboard){
+                        "${ChatColor.GREEN}An"
+                    }else {
+                        "${ChatColor.RED}Aus"
+                    }
+                    }",
+                )
+            }, { scoreboard = !scoreboard }, {}),
         )
     }
 
@@ -214,10 +247,34 @@ class Settings(
     ): ItemStack {
         val item = ItemStack(material, 1)
         val meta = item.itemMeta
+
+        meta?.addItemFlags(
+            ItemFlag.HIDE_ATTRIBUTES,
+            ItemFlag.HIDE_ENCHANTS,
+            ItemFlag.HIDE_UNBREAKABLE,
+            ItemFlag.HIDE_DESTROYS,
+            ItemFlag.HIDE_PLACED_ON,
+            ItemFlag.HIDE_DYE,
+        )
+
         meta?.setDisplayName(name)
         meta?.lore = lore.toMutableList()
         item.itemMeta = meta
 
         return item
     }
+
+    /*fun removeBundleItems(bundle: ItemStack?): ItemStack? {
+        if (bundle == null || bundle.type != Material.BUNDLE) return bundle
+
+        // Entferne alle Bundle-Inhalte aus dem NBT
+        val nmsStack: ItemStack = CraftItemStack.asNMSCopy(bundle)
+        val tag: net.minecraft.nbt.NBTTagCompound = nmsStack.u() // = getOrCreateTag()
+
+        if (tag != null) {
+            tag.r("Items") // Entfernt den "Items"-NBT-Tag
+        }
+
+        return CraftItemStack.asBukkitCopy(nmsStack)
+    }*/
 }

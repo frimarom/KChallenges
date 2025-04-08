@@ -30,7 +30,7 @@ class RunningChallengeGame(
 
     init {
         this.settings = gamePreparation.settings
-        settingsListener = SettingsListener(this, gamePreparation)
+        settingsListener = SettingsListener(this, settings)
         (plugin as JavaPlugin).getCommand("backpack")?.setExecutor(BackpackCommand(this, gamePreparation))
     }
 

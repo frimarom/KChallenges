@@ -40,7 +40,7 @@ class TeamSelectionMenu(
             26,
             createGuiItem(
                 Material.GREEN_WOOL,
-                "Starten",
+                "${ChatColor.GREEN}Starten",
             ),
         )
     }
@@ -107,7 +107,10 @@ class TeamSelectionMenu(
             val sortedTeams = gamePreparation.teams.sortedBy { it.member.size }
             val lowestTeam = sortedTeams[0]
             lowestTeam.member.add(player)
-            player.sendMessage("Du wurdest dem Team ${lowestTeam.name} automatisch hinzugefügt")
+            player.sendMessage(
+                "${ChatColor.GRAY}Du wurdest dem Team ${lowestTeam.color}" +
+                    "${lowestTeam.name}${ChatColor.GRAY}automatisch hinzugefügt",
+            )
         }
     }
 

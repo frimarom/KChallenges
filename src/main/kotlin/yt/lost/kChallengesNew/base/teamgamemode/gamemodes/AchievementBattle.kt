@@ -1,14 +1,21 @@
 package yt.lost.kChallengesNew.base.teamgamemode.gamemodes
 
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.advancement.Advancement
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerAdvancementDoneEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
+import org.bukkit.scheduler.BukkitRunnable
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.RunningTeamGame
+import yt.lost.kChallengesNew.base.challenges.Challenge
 import yt.lost.kChallengesNew.base.teamgamemode.Team
 import yt.lost.kChallengesNew.base.teamgamemode.TeamGameMode
 
@@ -49,6 +56,60 @@ class AchievementBattle : TeamGameMode() {
         TODO("Not yet implemented")
     }
 
+    override fun revealResult(plugin: Plugin) {
+        // Just temporary. See PagedInventory
+        val sorted = teamAchievements.toList().sortedByDescending { it.second.size }
+        val ranking = mutableMapOf<Team, Int>()
+        var currentPlace = 1
+        var lastSize: Int = -1
+        var index = 0
+
+        for ((key, value) in sorted) {
+            val size = value.size
+            if (size != lastSize) {
+                currentPlace = index + 1
+                lastSize = size
+            }
+            ranking[key] = currentPlace
+            index++
+        }
+
+        var counter = ranking.size - 1
+
+        object : BukkitRunnable() {
+            override fun run() {
+                if (counter <= -1) {
+                    this.cancel()
+                }
+                val currentTeam = ranking.keys.toList()[counter]
+
+                val placementText = TextComponent("${ChatColor.GRAY}Platz ${ChatColor.GREEN}${ranking[currentTeam]}:  ")
+                val hoverPart = TextComponent("[${currentTeam.color}${currentTeam.name}]")
+
+                hoverPart.color = net.md_5.bungee.api.ChatColor.GREEN
+                hoverPart.hoverEvent =
+                    HoverEvent(
+                        HoverEvent.Action.SHOW_TEXT,
+                        Text("Mitglieder:\n" + currentTeam.member.map { it.name }.joinToString("\n")),
+                    )
+                placementText.addExtra(hoverPart)
+
+                for (player in Bukkit.getOnlinePlayers()) {
+                    player.sendTitle(
+                        "${ChatColor.GRAY}Platz ${ChatColor.GREEN}${ranking[currentTeam]}: ${currentTeam.color}${currentTeam.name}",
+                        teamAchievements[currentTeam]?.size!!.toString(),
+                        5,
+                        30,
+                        5,
+                    )
+                    player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f)
+                    player.spigot().sendMessage(placementText)
+                }
+                counter -= 1
+            }
+        }.runTaskTimer(plugin, 1, 40)
+    }
+
     @EventHandler
     fun onAchievementGrant(event: PlayerAdvancementDoneEvent) {
         val advancement = event.advancement
@@ -57,8 +118,6 @@ class AchievementBattle : TeamGameMode() {
             return
         }
         // Adventure und Nether rausmachen
-        // ersten 10 min pvp aus
-        // Settings sterben erlaubt
         val playerTeam = this.gamePreparation?.playerTeams?.get(event.player)
         if (!teamAchievements[playerTeam]?.contains(advancement)!!) {
             teamAchievements[playerTeam]?.add(advancement)
@@ -68,10 +127,10 @@ class AchievementBattle : TeamGameMode() {
         }
     }
 
-    private fun getAchievementName(advancement: Advancement): String =
-        advancement.key.key
-            .replace("_", " ")
-            .capitalizeWords()
+    private fun getChallengeDescriptionHoverEffectList(activeChallenges: List<Challenge>): TextComponent {
+        val message = TextComponent("Mitglieder: ")
+        return message
+    }
 
     private fun String.capitalizeWords(): String = split("_").joinToString(" ") { it.replaceFirstChar { c -> c.uppercaseChar() } }
 }

@@ -72,11 +72,4 @@ class SettingsSelectionMenu(
             }
         }
     }
-
-    /*@EventHandler
-    fun inventoryCloseEvent(event: InventoryCloseEvent){
-        if(event.inventory == this.inventory){
-            HandlerList.unregisterAll(this)
-        }
-    }*/
 }

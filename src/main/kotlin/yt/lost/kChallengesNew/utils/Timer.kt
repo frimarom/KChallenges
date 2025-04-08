@@ -13,8 +13,8 @@ class Timer(
     private val game: Game,
 ) {
     var running: Boolean = false
+    var currentTime: Int = 0
 
-    private var currentTime: Int = 0
     private val runnable: BukkitRunnable =
         object : BukkitRunnable() {
             override fun run() {
