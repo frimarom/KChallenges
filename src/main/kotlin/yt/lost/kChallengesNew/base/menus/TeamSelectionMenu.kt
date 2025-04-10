@@ -30,7 +30,7 @@ class TeamSelectionMenu(
             val dyeColor = colors[i]
             val material = Material.matchMaterial("${dyeColor.name}_BED")
             val chatColor = dyeColorToChatColor(dyeColor)
-            val team = Team(chatColor, "$chatColor Team ${dyeColor.name}", i, material!!)
+            val team = Team(chatColor, "${chatColor}Team ${dyeColor.name}", i, material!!)
             gamePreparation.teams.add(team)
         }
         for (team in gamePreparation.teams) {
@@ -106,10 +106,10 @@ class TeamSelectionMenu(
             }
             val sortedTeams = gamePreparation.teams.sortedBy { it.member.size }
             val lowestTeam = sortedTeams[0]
-            lowestTeam.member.add(player)
+            addPlayerToTeam(player, lowestTeam)
             player.sendMessage(
                 "${ChatColor.GRAY}Du wurdest dem Team ${lowestTeam.color}" +
-                    "${lowestTeam.name}${ChatColor.GRAY}automatisch hinzugefügt",
+                    "${lowestTeam.name}${ChatColor.GRAY} automatisch hinzugefügt",
             )
         }
     }

@@ -8,6 +8,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.advancement.Advancement
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerAdvancementDoneEvent
 import org.bukkit.inventory.ItemStack
@@ -16,10 +17,13 @@ import org.bukkit.scheduler.BukkitRunnable
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.RunningTeamGame
 import yt.lost.kChallengesNew.base.challenges.Challenge
+import yt.lost.kChallengesNew.base.menus.PagedInventory
 import yt.lost.kChallengesNew.base.teamgamemode.Team
 import yt.lost.kChallengesNew.base.teamgamemode.TeamGameMode
 
-class AchievementBattle : TeamGameMode() {
+class AchievementBattle(
+    private val plugin: Plugin,
+) : TeamGameMode() {
     private var teamAchievements: MutableMap<Team, MutableList<Advancement>> = mutableMapOf()
 
     override fun onStart(
@@ -31,6 +35,14 @@ class AchievementBattle : TeamGameMode() {
 
         for (team in gamePreparation.teams) {
             teamAchievements[team] = mutableListOf()
+        }
+
+        for (player in Bukkit.getOnlinePlayers()) {
+            player.sendMessage(
+                "${ChatColor.GRAY}" +
+                    "Ziel des Spiels ist es so viele verschiedene Achievements wie möglich für dein Team zu holen. " +
+                    "Das Team mit den meisten Achievements gewinnt am Ende das Spiel",
+            )
         }
     }
 
@@ -108,6 +120,36 @@ class AchievementBattle : TeamGameMode() {
                 counter -= 1
             }
         }.runTaskTimer(plugin, 1, 40)
+    }
+
+    override fun showProgress(player: Player) {
+        val team = this.gamePreparation?.playerTeams?.get(player)
+        val items =
+            Bukkit.advancementIterator().asSequence().toList().filter { it.display != null }.map {
+                if (!teamAchievements[team]?.map { ach -> ach.key }?.contains(it.key)!!) {
+                    createGuiItem(
+                        it.display?.icon?.type!!,
+                        "${it.display?.type?.color!!}${it.display?.title!!}",
+                        "${ChatColor.DARK_GRAY}${it.display?.description!!}",
+                        "${ChatColor.RED}Noch nicht geschafft",
+                    )
+                } else {
+                    createGuiItem(
+                        Material.GREEN_STAINED_GLASS_PANE,
+                        "${it.display?.type?.color!!}${it.display?.title!!}",
+                        "${ChatColor.DARK_GRAY}${it.display?.description!!}",
+                        "${ChatColor.GREEN}Schon geschafft!",
+                    )
+                }
+            }
+        val pagedInventory =
+            PagedInventory(
+                player,
+                "Achievement Liste:",
+                items,
+            )
+        plugin.server.pluginManager.registerEvents(pagedInventory, plugin)
+        pagedInventory.open()
     }
 
     @EventHandler

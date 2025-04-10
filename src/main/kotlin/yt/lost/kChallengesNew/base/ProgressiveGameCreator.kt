@@ -41,7 +41,7 @@ class ProgressiveGameCreator(
                 currentPlayer?.openInventory(gameSelectionMenu.inventory)
             }
             1 -> {
-                teamGameModeSelectionMenu = TeamGameModeSelectionMenu(this, gamePreparation)
+                teamGameModeSelectionMenu = TeamGameModeSelectionMenu(plugin, this, gamePreparation)
                 challengeSelectionMenu = ChallengeSelectionMenu(this, gamePreparation)
                 plugin.server.pluginManager.registerEvents(challengeSelectionMenu, plugin)
                 plugin.server.pluginManager.registerEvents(teamGameModeSelectionMenu, plugin)

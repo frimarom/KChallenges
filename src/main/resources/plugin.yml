@@ -12,3 +12,5 @@ commands:
     description: reveal result
     aliases:
       - reveal
+  progress:
+    description: see progress

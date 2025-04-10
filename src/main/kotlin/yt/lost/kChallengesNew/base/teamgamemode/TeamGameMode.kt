@@ -1,6 +1,7 @@
 package yt.lost.kChallengesNew.base.teamgamemode
 
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
@@ -8,7 +9,6 @@ import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.RunningTeamGame
 
 abstract class TeamGameMode : Listener {
-    val participatingTeams: MutableList<Team> = mutableListOf()
     var gamePreparation: GamePreparation? = null
     var runningTeamGame: RunningTeamGame? = null
 
@@ -26,6 +26,8 @@ abstract class TeamGameMode : Listener {
     abstract fun updateScoreboardForTeam()
 
     abstract fun revealResult(plugin: Plugin)
+
+    abstract fun showProgress(player: Player)
 
     protected fun createGuiItem(
         material: Material,

@@ -6,17 +6,19 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 import yt.lost.kChallengesNew.base.teamgamemode.TeamGameModeCollection
 
 class TeamGameModeSelectionMenu(
+    plugin: Plugin,
     private val progressiveGameCreator: ProgressiveGameCreator,
     gamePreparation: GamePreparation,
 ) : SelectionMenu(gamePreparation) {
     override val inventory: Inventory = Bukkit.createInventory(null, InventoryType.BARREL, "Team Game Modes")
 
-    private val teamGameModeCollection: TeamGameModeCollection = TeamGameModeCollection()
+    private val teamGameModeCollection: TeamGameModeCollection = TeamGameModeCollection(plugin)
 
     init {
         for (teamGameMode in teamGameModeCollection.teamGameModes) {
