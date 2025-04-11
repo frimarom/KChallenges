@@ -14,11 +14,16 @@ repositories {
     maven("https://oss.sonatype.org/content/groups/public/") {
         name = "sonatype"
     }
+    maven("https://repo.papermc.io/repository/maven-public/") {
+    }
 }
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.45.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.0-M2")
+    testImplementation("org.mockito:mockito-core:5.17.0")
 }
 
 val targetJavaVersion = 21

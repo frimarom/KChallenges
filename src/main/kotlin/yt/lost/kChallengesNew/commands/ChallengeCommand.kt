@@ -21,6 +21,7 @@ class ChallengeCommand(
         p2: String,
         p3: Array<out String>,
     ): Boolean {
+        // TODO maybe beim neuöffnen des commands wieder von vorne beginnen oder "zurück" tasten einbauen
         if (progressiveGameCreator.currentPlayer != p0 && progressiveGameCreator.currentPlayer != null) {
             if (progressiveGameCreator.isCreating) {
                 p0.sendMessage("${ChatColor.RED}Du kannst nicht während ein anderer bereits startet die Modi auswählen")

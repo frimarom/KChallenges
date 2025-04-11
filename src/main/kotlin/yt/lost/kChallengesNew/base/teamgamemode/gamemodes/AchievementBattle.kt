@@ -16,7 +16,6 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.RunningTeamGame
-import yt.lost.kChallengesNew.base.challenges.Challenge
 import yt.lost.kChallengesNew.base.menus.PagedInventory
 import yt.lost.kChallengesNew.base.teamgamemode.Team
 import yt.lost.kChallengesNew.base.teamgamemode.TeamGameMode
@@ -69,7 +68,7 @@ class AchievementBattle(
     }
 
     override fun revealResult(plugin: Plugin) {
-        // Just temporary. See PagedInventory
+        // TODO reveal achievements in inventory
         val sorted = teamAchievements.toList().sortedByDescending { it.second.size }
         val ranking = mutableMapOf<Team, Int>()
         var currentPlace = 1
@@ -102,7 +101,7 @@ class AchievementBattle(
                 hoverPart.hoverEvent =
                     HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
-                        Text("Mitglieder:\n" + currentTeam.member.map { it.name }.joinToString("\n")),
+                        Text("Mitglieder:\n" + currentTeam.member.joinToString("\n") { it.name }),
                     )
                 placementText.addExtra(hoverPart)
 
@@ -164,15 +163,8 @@ class AchievementBattle(
         if (!teamAchievements[playerTeam]?.contains(advancement)!!) {
             teamAchievements[playerTeam]?.add(advancement)
             playerTeam?.sendMessageToMember(
-                "Der Spieler ${event.player.name} hat das Achievement ${advancement.display?.title} für dein Team erreicht",
+                "${ChatColor.GRAY}Das Teammitglied ${ChatColor.GREEN}${event.player.name}${ChatColor.GRAY} hat das Achievement ${advancement.display?.type?.color}${advancement.display?.title}${ChatColor.GRAY} für dein Team erreicht",
             )
         }
     }
-
-    private fun getChallengeDescriptionHoverEffectList(activeChallenges: List<Challenge>): TextComponent {
-        val message = TextComponent("Mitglieder: ")
-        return message
-    }
-
-    private fun String.capitalizeWords(): String = split("_").joinToString(" ") { it.replaceFirstChar { c -> c.uppercaseChar() } }
 }
