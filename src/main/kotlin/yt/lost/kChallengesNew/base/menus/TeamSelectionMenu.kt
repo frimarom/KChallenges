@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
+import yt.lost.kChallengesNew.base.GameCreatorDirection
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 import yt.lost.kChallengesNew.base.teamgamemode.Team
@@ -24,6 +25,7 @@ class TeamSelectionMenu(
 ) : SelectionMenu(gamePreparation) {
     override val inventory: Inventory = Bukkit.createInventory(null, InventoryType.BARREL, "Team Auswahl:")
 
+    // TODO Team Creation und autofill und so auslagern in neue Klasse
     init {
         val colors = DyeColor.entries.shuffled()
         repeat(gamePreparation.settings.teamAmount) { i ->
@@ -65,9 +67,9 @@ class TeamSelectionMenu(
         } else if (item.type == Material.GREEN_WOOL) {
             if (clicker == gamePreparation.admin) {
                 autofillRemainingPlayer()
-                progressiveGameCreator.nextStep(gamePreparation)
+                progressiveGameCreator.nextStep(gamePreparation, GameCreatorDirection.FORWARD)
             } else {
-                clicker.sendMessage("${ChatColor.RED}Nur der Admin kann die Challenge starten")
+                clicker.sendMessage("${ChatColor.RED}Warte bis der Admin das Spiel startet!")
             }
         }
     }

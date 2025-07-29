@@ -43,9 +43,14 @@ class RunningChallengeGame(
 
         plugin.server.pluginManager.registerEvents(settingsListener, plugin)
 
-        val challengeText = TextComponent("Das Spiel wurde mit den Challenges").apply { color = net.md_5.bungee.api.ChatColor.GRAY }
-        challengeText.addExtra(getChallengeDescriptionHoverEffectList(this.gamePreparation.challenges))
-        challengeText.addExtra(TextComponent("gestartet").apply { color = net.md_5.bungee.api.ChatColor.GRAY })
+        var challengeText = TextComponent("Das Spiel wurde ohne Challenges gestartet").apply { color = net.md_5.bungee.api.ChatColor.GRAY }
+
+        if (gamePreparation.challenges.isNotEmpty()) {
+            challengeText =
+                TextComponent("Das Spiel wurde mit den Challenges").apply { color = net.md_5.bungee.api.ChatColor.GRAY }
+            challengeText.addExtra(getChallengeDescriptionHoverEffectList(this.gamePreparation.challenges))
+            challengeText.addExtra(TextComponent("gestartet").apply { color = net.md_5.bungee.api.ChatColor.GRAY })
+        }
 
         for (player in Bukkit.getOnlinePlayers()) {
             player.sendTitle("§aDer Timer", "§7wurde gestartet", 5, 40, 5)

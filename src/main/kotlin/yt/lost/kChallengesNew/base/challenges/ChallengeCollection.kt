@@ -11,5 +11,6 @@ class ChallengeCollection {
         challenges.add(MoreKnockbackChallenge())
         challenges.add(AlkoholChallenge())
         challenges.add(RandomizerChallenge())
+        challenges.add(RandomizedCrafting())
     }
 }

@@ -7,6 +7,7 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
+import yt.lost.kChallengesNew.base.GameCreatorDirection
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 import yt.lost.kChallengesNew.base.teamgamemode.TeamGameModeCollection
@@ -39,7 +40,7 @@ class TeamGameModeSelectionMenu(
         for (teamGameMode in teamGameModeCollection.teamGameModes) {
             if (teamGameMode.updateAndGetCharacterizedItem().type == item?.type) {
                 gamePreparation.teamGameMode = teamGameMode
-                progressiveGameCreator.nextStep(gamePreparation)
+                progressiveGameCreator.nextStep(gamePreparation, GameCreatorDirection.FORWARD)
             }
         }
     }

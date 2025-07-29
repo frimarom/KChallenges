@@ -8,6 +8,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import yt.lost.kChallengesNew.base.GameCreatorDirection
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 import yt.lost.kChallengesNew.base.challenges.ChallengeCollection
@@ -28,6 +29,7 @@ class ChallengeSelectionMenu(
         for (i in 45..52) {
             inventory.setItem(i, ItemStack(Material.GRAY_STAINED_GLASS_PANE))
         }
+        inventory.setItem(45, createGuiItem(Material.RED_WOOL, "Zurück"))
         inventory.setItem(53, createGuiItem(Material.GREEN_WOOL, "Weiter"))
     }
 
@@ -41,7 +43,14 @@ class ChallengeSelectionMenu(
         val clicker = event.whoClicked as Player
 
         val item: ItemStack? = event.currentItem
-        if (item?.type != Material.GREEN_WOOL && item?.type != Material.GRAY_STAINED_GLASS_PANE) {
+        if (item?.type == Material.GREEN_WOOL) {
+            val enabledChallenges = challengeCollection.challenges.filter { it.isEnabled }
+            gamePreparation.challenges = enabledChallenges
+            progressiveGameCreator.nextStep(gamePreparation, GameCreatorDirection.FORWARD)
+        } else if (item?.type == Material.RED_WOOL) {
+            challengeCollection.challenges.map { it.isEnabled = false }
+            progressiveGameCreator.nextStep(gamePreparation, GameCreatorDirection.BACKWARD)
+        } else if (item?.type != Material.GRAY_STAINED_GLASS_PANE) {
             for (challenge in challengeCollection.challenges) {
                 if (challenge.updateAndGetCharacterizedItem().type == item?.type) {
                     challenge.isEnabled = !challenge.isEnabled
@@ -49,10 +58,6 @@ class ChallengeSelectionMenu(
                     this.inventory.setItem(event.slot, challenge.updateAndGetCharacterizedItem())
                 }
             }
-        } else {
-            val enabledChallenges = challengeCollection.challenges.filter { it.isEnabled }
-            gamePreparation.challenges = enabledChallenges
-            progressiveGameCreator.nextStep(gamePreparation)
         }
     }
 

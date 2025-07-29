@@ -10,7 +10,7 @@ class Team(
     val color: ChatColor,
     val name: String,
     val invLocation: Int,
-    private val material: Material,
+    material: Material,
 ) {
     val member: MutableList<Player> = mutableListOf()
 

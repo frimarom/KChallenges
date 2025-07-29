@@ -46,7 +46,7 @@ class AlkoholChallenge : Challenge() {
         val to: Location? = event.to
 
         if (to != null && (from.x != to.x || from.z != to.z || from.y != to.y)) {
-            event.setTo(Location(from.getWorld(), from.x, from.y, from.z, to.yaw, to.pitch))
+            event.setTo(Location(from.world, from.x, from.y, from.z, to.yaw, to.pitch))
         }
     }
 
@@ -84,7 +84,7 @@ class AlkoholChallenge : Challenge() {
         if (event.mount.type == EntityType.HORSE || event.mount.type == EntityType.MULE || event.mount.type == EntityType.DONKEY) {
             val player = event.entity as Player
             event.isCancelled = true
-            player.sendMessage("${ChatColor.RED}Du darfst nicht während du trinkst Pferde reiten")
+            player.sendMessage("${ChatColor.RED}Dont drink and ride!!!")
             drinkingOrder(player)
         }
     }
@@ -130,13 +130,12 @@ class AlkoholChallenge : Challenge() {
             "${ChatColor.DARK_RED}${ChatColor.BOLD} TRINK",
             "${ChatColor.GRAY} Wenn du fertig bist rechtsklick die Honigflasche",
             1,
-            30,
+            40,
             1,
         )
         val players = Bukkit.getOnlinePlayers().toMutableList()
         players.forEach { p -> p.playSound(player.location, Sound.BLOCK_BELL_USE, 10f, 0.1f) }
-        players.remove(player)
-        players.forEach { p ->
+        players.filter { it -> it != player }.forEach { p ->
             p.sendTitle("${ChatColor.RED}${player.name} muss trinken!", "${ChatColor.GRAY} Du musst auf ihn warten...", 1, 30, 1)
         }
     }

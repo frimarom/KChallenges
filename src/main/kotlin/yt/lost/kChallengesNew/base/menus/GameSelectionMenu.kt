@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import yt.lost.kChallengesNew.base.GameCreatorDirection
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 
@@ -57,11 +58,11 @@ class GameSelectionMenu(
         when (item?.type) {
             Material.GOLD_BLOCK -> {
                 gamePreparation.settings.isChallenge = false
-                progressiveGameCreator.nextStep(gamePreparation)
+                progressiveGameCreator.nextStep(gamePreparation, GameCreatorDirection.FORWARD)
             }
             Material.NETHERITE_PICKAXE -> {
                 gamePreparation.settings.isChallenge = true
-                progressiveGameCreator.nextStep(gamePreparation)
+                progressiveGameCreator.nextStep(gamePreparation, GameCreatorDirection.FORWARD)
             }
             else -> {}
         }

@@ -16,7 +16,6 @@ class ProgressiveGameCreator(
     private val plugin: Plugin,
 ) {
     var isCreating: Boolean = true
-    var isInProgression: Boolean = false
 
     private lateinit var gameSelectionMenu: GameSelectionMenu
     private lateinit var teamGameModeSelectionMenu: TeamGameModeSelectionMenu
@@ -32,30 +31,41 @@ class ProgressiveGameCreator(
         plugin.server.pluginManager.registerEvents(idleListener, plugin)
     }
 
-    fun nextStep(gamePreparation: GamePreparation) {
+    fun nextStep(
+        gamePreparation: GamePreparation,
+        direction: GameCreatorDirection?,
+    ) {
+        when (direction) {
+            GameCreatorDirection.FORWARD -> {
+                step += 1
+            }
+            GameCreatorDirection.BACKWARD -> {
+                step -= 1
+            }
+            else -> {
+                step = 0
+            }
+        }
         when (step) {
             0 -> {
                 gameSelectionMenu = GameSelectionMenu(this, gamePreparation)
                 plugin.server.pluginManager.registerEvents(gameSelectionMenu, plugin)
-                step += 1
                 currentPlayer?.openInventory(gameSelectionMenu.inventory)
             }
             1 -> {
-                teamGameModeSelectionMenu = TeamGameModeSelectionMenu(plugin, this, gamePreparation)
-                challengeSelectionMenu = ChallengeSelectionMenu(this, gamePreparation)
-                plugin.server.pluginManager.registerEvents(challengeSelectionMenu, plugin)
-                plugin.server.pluginManager.registerEvents(teamGameModeSelectionMenu, plugin)
-                step += 1
                 if (gamePreparation.settings.isChallenge) {
+                    challengeSelectionMenu = ChallengeSelectionMenu(this, gamePreparation)
+                    plugin.server.pluginManager.registerEvents(challengeSelectionMenu, plugin)
                     currentPlayer?.openInventory(challengeSelectionMenu.inventory)
                 } else {
+                    teamGameModeSelectionMenu = TeamGameModeSelectionMenu(plugin, this, gamePreparation)
+                    plugin.server.pluginManager.registerEvents(teamGameModeSelectionMenu, plugin)
                     currentPlayer?.openInventory(teamGameModeSelectionMenu.inventory)
                 }
             }
             2 -> {
                 settingsSelectionMenu = SettingsSelectionMenu(this, gamePreparation)
                 plugin.server.pluginManager.registerEvents(settingsSelectionMenu, plugin)
-                step += 1
                 currentPlayer?.openInventory(settingsSelectionMenu.inventory)
             }
             3 -> {
@@ -67,7 +77,6 @@ class ProgressiveGameCreator(
                     for (player in Bukkit.getOnlinePlayers()) {
                         player.openInventory(teamSelectionMenu.inventory)
                     }
-                    step += 1
                 }
             }
             4 -> {
@@ -84,10 +93,10 @@ class ProgressiveGameCreator(
             player.closeInventory()
         }
         if (gamePreparation.settings.isChallenge) {
-            var challenge: RunningChallengeGame = RunningChallengeGame(plugin, gamePreparation)
+            val challenge = RunningChallengeGame(plugin, gamePreparation)
             challenge.start()
         } else {
-            var teamGame: RunningTeamGame = RunningTeamGame(plugin, gamePreparation)
+            val teamGame = RunningTeamGame(plugin, gamePreparation)
             teamGame.start()
         }
     }

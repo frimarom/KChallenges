@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
+import yt.lost.kChallengesNew.base.GameCreatorDirection
 import yt.lost.kChallengesNew.base.GamePreparation
 import yt.lost.kChallengesNew.base.ProgressiveGameCreator
 import yt.lost.kChallengesNew.settings.Settings
@@ -26,6 +27,13 @@ class SettingsSelectionMenu(
         repeat(settings.settingsList.size) { i ->
             inventory.setItem(i, settings.settingsList[i].updateAndGetItem())
         }
+        this.inventory.setItem(
+            18,
+            createGuiItem(
+                Material.RED_WOOL,
+                "Zurück",
+            ),
+        )
         this.inventory.setItem(
             26,
             createGuiItem(
@@ -50,7 +58,10 @@ class SettingsSelectionMenu(
             when (item?.type) {
                 Material.GREEN_WOOL -> {
                     gamePreparation.settings = settings
-                    progressiveGameCreator.nextStep(gamePreparation)
+                    progressiveGameCreator.nextStep(gamePreparation, GameCreatorDirection.FORWARD)
+                }
+                Material.RED_WOOL -> {
+                    progressiveGameCreator.nextStep(gamePreparation, GameCreatorDirection.BACKWARD)
                 }
                 else -> {
                     repeat(settings.settingsList.size) { i ->

@@ -29,6 +29,5 @@ class KChallengesNew : JavaPlugin() {
 
     /* Features
      * -pause challenge
-     * -sachen anzeigen die man schon gemacht hat bspw in achievementbattle
      * */
 }
